@@ -9,12 +9,16 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 public class FlipTrackerClient implements ClientModInitializer {
+	// Экран нельзя открывать прямо из команды: чат закроется и закроет его. Открываем на следующем тике.
+	private static boolean pendingOpen = false;
+
 	private static final Map<String, Integer> BG = Map.of(
 		"green", 0x1B2A1F, "dark", 0x15171A, "blue", 0x14233A, "purple", 0x2A1B3A, "red", 0x3A1B1B, "black", 0x000000);
 	private static final Map<String, Integer> FG = Map.of(
@@ -23,6 +27,12 @@ public class FlipTrackerClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		Tracker.load();
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			if (pendingOpen) {
+				pendingOpen = false;
+				client.gui.setScreen(new ConfigScreen());
+			}
+		});
 		ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
 			if (!overlay) Tracker.onChat(message.getString());
 		});
@@ -41,8 +51,8 @@ public class FlipTrackerClient implements ClientModInitializer {
 
 	private static int help(CommandContext<FabricClientCommandSource> c) {
 		return say(c,
-			"/flip lang ru|en | bg <цвет|HEX> | fg <цвет|HEX> | alpha 0-100 | pos x y | move dx dy | toggle | reset session|all|pos",
-			"/flip lang ru|en | bg <name|HEX> | fg <name|HEX> | alpha 0-100 | pos x y | move dx dy | toggle | reset session|all|pos");
+			"/flip (меню) | gui | lang ru|en | bg <цвет|HEX> | fg <цвет|HEX> | alpha 0-100 | pos x y | move dx dy | toggle | reset session|all|pos",
+			"/flip (menu) | gui | lang ru|en | bg <name|HEX> | fg <name|HEX> | alpha 0-100 | pos x y | move dx dy | toggle | reset session|all|pos");
 	}
 
 	private static Integer color(String s, Map<String, Integer> names) {
@@ -58,7 +68,15 @@ public class FlipTrackerClient implements ClientModInitializer {
 	private static void register(CommandDispatcher<FabricClientCommandSource> d) {
 		Tracker.Settings s = Tracker.data.settings;
 		d.register(ClientCommands.literal("flip")
-			.executes(FlipTrackerClient::help)
+			.executes(ctx -> {
+				pendingOpen = true;
+				return 1;
+			})
+			.then(ClientCommands.literal("gui").executes(ctx -> {
+				pendingOpen = true;
+				return 1;
+			}))
+			.then(ClientCommands.literal("help").executes(FlipTrackerClient::help))
 			.then(ClientCommands.literal("lang")
 				.then(ClientCommands.argument("l", StringArgumentType.word()).executes(c -> {
 					String l = StringArgumentType.getString(c, "l").toLowerCase();

@@ -22,6 +22,7 @@ public final class Tracker {
 		public int fg = 0xF0D060;
 		public int x = 6, y = 6;
 		public boolean visible = true;
+		public boolean showSession = true, showLast = true, showHolding = true, shadow = true;
 	}
 	public static final class Data {
 		public List<Flip> flips = new ArrayList<>();
