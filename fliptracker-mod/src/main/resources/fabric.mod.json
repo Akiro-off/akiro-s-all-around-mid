@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "fliptracker",
+  "version": "${version}",
+  "name": "Flip Tracker",
+  "description": "Automatic Hypixel SkyBlock auction flip profit tracker with an in-game HUD.",
+  "authors": ["you"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.fliptracker.FlipTrackerClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
