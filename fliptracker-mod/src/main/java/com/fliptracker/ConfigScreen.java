@@ -14,7 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 /**
- * Меню настроек в стиле SkyHanni: слева категории, справа настройки.
+ * Akiro's Allround Mod: меню настроек в стиле SkyHanni: слева категории, справа настройки.
  *
  * ЧТОБЫ ДОБАВИТЬ НОВУЮ ФУНКЦИЮ:
  *  1. Добавь поле в Tracker.Settings.
@@ -29,7 +29,7 @@ public class ConfigScreen extends Screen {
 	private final List<Cat> cats = cats();
 
 	public ConfigScreen() {
-		super(Component.literal("Flip Tracker"));
+		super(Component.literal("Akiro's Allround Mod"));
 	}
 
 	// ---------- описание настроек ----------
@@ -59,13 +59,12 @@ public class ConfigScreen extends Screen {
 
 		// --- Флип-трекер ---
 		List<Opt> flip = new ArrayList<>();
+		flip.add(toggle("Показывать панель", "Show panel", () -> s().visible, v -> s().visible = v));
 		flip.add(toggle("Показывать сессию", "Show session", () -> s().showSession, v -> s().showSession = v));
 		flip.add(toggle("Показывать последний флип", "Show last flip", () -> s().showLast, v -> s().showLast = v));
 		flip.add(toggle("Показывать ожидающие продажи", "Show waiting items", () -> s().showHolding, v -> s().showHolding = v));
-		flip.add(action("Сброс сессии", "Reset session", () -> tr("Сбросить", "Reset"), () -> {
-			Tracker.sessionStart = System.currentTimeMillis();
-		}, false));
-		flip.add(new Opt("Удалить все данные", "Delete all data", c -> {
+		flip.add(action("Сброс сессии", "Reset session", () -> tr("Сбросить", "Reset"), Tracker::resetSession, false));
+		flip.add(new Opt("Удалить данные флипов", "Delete flip data", c -> {
 			Component label = confirmAll
 				? Component.literal(tr("Нажми ещё раз", "Click again")).withStyle(ChatFormatting.RED)
 				: Component.literal(tr("Удалить всё", "Delete all"));
@@ -76,7 +75,7 @@ public class ConfigScreen extends Screen {
 					Tracker.data.flips.clear();
 					Tracker.data.holding.clear();
 					Tracker.data.unmatched = 0;
-					Tracker.sessionStart = System.currentTimeMillis();
+					Tracker.resetSession();
 					Tracker.save();
 					confirmAll = false;
 				}
@@ -85,24 +84,40 @@ public class ConfigScreen extends Screen {
 		}));
 		l.add(new Cat("Флип-трекер", "Flip Tracker", flip));
 
+		// --- Деревья ---
+		List<Opt> trees = new ArrayList<>();
+		trees.add(toggle("Показывать панель деревьев", "Show trees panel", () -> s().treeVisible, v -> s().treeVisible = v));
+		trees.add(toggle("Разбивка по породам", "Show by tree type", () -> s().treeByType, v -> s().treeByType = v));
+		trees.add(toggle("Деревьев в час", "Trees per hour", () -> s().treePerHour, v -> s().treePerHour = v));
+		trees.add(action("Добавить дерево вручную", "Add a tree manually", () -> "+1", () -> Tracker.addTree(null, 1), false));
+		trees.add(action("Сбросить деревья", "Reset trees", () -> tr("Сбросить", "Reset"), Tracker::resetTrees, false));
+		trees.add(toggle("Запись чата (отладка)", "Record chat (debug)", () -> s().recordChat, v -> s().recordChat = v));
+		l.add(new Cat("Деревья", "Trees", trees));
+
 		// --- Интерфейс ---
 		List<Opt> gui = new ArrayList<>();
-		gui.add(toggle("Показывать панель", "Show panel", () -> s().visible, v -> s().visible = v));
+		gui.add(toggle("Фон", "Background", () -> s().showBg, v -> s().showBg = v));
+		gui.add(cycle("Стиль текста", "Text style", new String[]{"Как в Minecraft", "Один цвет"}, new String[]{"Minecraft colors", "Single color"},
+			new int[]{1, 0}, () -> s().mcStyle ? 1 : 0, v -> s().mcStyle = v == 1, false));
 		gui.add(cycle("Язык", "Language", new String[]{"Русский", "English"}, new String[]{"Русский", "English"},
 			new int[]{0, 1}, () -> "en".equals(s().lang) ? 1 : 0, v -> s().lang = v == 1 ? "en" : "ru", true));
 		gui.add(cycle("Цвет фона", "Background color", BG_RU, BG_EN, BG_VAL, () -> s().bg, v -> s().bg = v, false));
-		gui.add(cycle("Цвет текста", "Text color", FG_RU, FG_EN, FG_VAL, () -> s().fg, v -> s().fg = v, false));
+		gui.add(cycle("Цвет текста (один цвет)", "Text color (single)", FG_RU, FG_EN, FG_VAL, () -> s().fg, v -> s().fg = v, false));
 		gui.add(step("Прозрачность фона", "Background opacity", 0, 100, 10, "%", () -> s().bgAlpha, v -> s().bgAlpha = v));
 		gui.add(toggle("Тень у текста", "Text shadow", () -> s().shadow, v -> s().shadow = v));
 		l.add(new Cat("Интерфейс", "GUI", gui));
 
 		// --- Позиция ---
 		List<Opt> pos = new ArrayList<>();
-		pos.add(step("Позиция X", "Position X", 0, 2000, 10, "", () -> s().x, v -> s().x = v));
-		pos.add(step("Позиция Y", "Position Y", 0, 2000, 10, "", () -> s().y, v -> s().y = v));
-		pos.add(action("Сбросить позицию", "Reset position", () -> tr("Сбросить", "Reset"), () -> {
+		pos.add(step("Флипы: X", "Flips: X", 0, 2000, 10, "", () -> s().x, v -> s().x = v));
+		pos.add(step("Флипы: Y", "Flips: Y", 0, 2000, 10, "", () -> s().y, v -> s().y = v));
+		pos.add(step("Деревья: X", "Trees: X", 0, 2000, 10, "", () -> s().treeX, v -> s().treeX = v));
+		pos.add(step("Деревья: Y", "Trees: Y", 0, 2000, 10, "", () -> s().treeY, v -> s().treeY = v));
+		pos.add(action("Сбросить позиции", "Reset positions", () -> tr("Сбросить", "Reset"), () -> {
 			s().x = 6;
 			s().y = 6;
+			s().treeX = 6;
+			s().treeY = 80;
 			Tracker.save();
 		}, true));
 		l.add(new Cat("Позиция", "Position", pos));
@@ -226,7 +241,7 @@ public class ConfigScreen extends Screen {
 		g.fill(px + sideW, py + 28, px + sideW + 1, py + ph - 6, line);
 		g.fill(px + 6, py + 26, px + pw - 6, py + 27, line);
 
-		g.text(this.font, "Flip Tracker", px + 8, py + 10, 0xFFF0D060, true);
+		g.text(this.font, "Akiro's Allround Mod", px + 8, py + 10, 0xFFF0D060, true);
 		String sub = tr("Настройки", "Settings");
 		g.text(this.font, sub, px + pw - 8 - this.font.width(sub), py + 10, 0xFF93A899, true);
 
@@ -238,10 +253,11 @@ public class ConfigScreen extends Screen {
 
 		if (selected == cats.size() - 1) {
 			String[] about = {
-				tr("Flip Tracker: учёт прибыли с аукционных флипов.", "Flip Tracker: auction flip profit tracking."),
-				tr("Покупки и продажи считаются по сообщениям чата.", "Buys and sells are read from chat messages."),
+				"Akiro's Allround Mod",
+				tr("Флип-трекер: прибыль с аукционных флипов.", "Flip Tracker: auction flip profit."),
+				tr("Деревья: счётчик срубленных деревьев.", "Trees: felled tree counter."),
 				tr("Данные: config/fliptracker.json", "Data: config/fliptracker.json"),
-				tr("Команды: /flip help", "Commands: /flip help"),
+				tr("Команды: /flip help (или /akiro help)", "Commands: /flip help (or /akiro help)"),
 			};
 			for (int i = 0; i < about.length; i++) {
 				g.text(this.font, about[i], rowsX, py + 40 + i * 14, 0xFFE6EFE8, true);
