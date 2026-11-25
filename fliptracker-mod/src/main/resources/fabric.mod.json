@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "fliptracker",
   "version": "${version}",
-  "name": "Flip Tracker",
+  "name": "akiros allround mod",
   "description": "Automatic Hypixel SkyBlock auction flip profit tracker with an in-game HUD.",
   "authors": ["you"],
   "license": "MIT",
