@@ -13,12 +13,10 @@ public final class HudRenderer {
 
 	private static final Map<String, String> RU = Map.of(
 		"total", "ВСЕГО", "flips", "флипов", "session", "Сессия", "hour", "ч",
-		"last", "Последний", "holding", "Ждут продажи", "unm", "без пары",
-		"trees", "Срублено деревьев", "tcount", "Всего");
+		"last", "Последний", "holding", "Ждут продажи", "unm", "без пары");
 	private static final Map<String, String> EN = Map.of(
 		"total", "TOTAL", "flips", "flips", "session", "Session", "hour", "h",
-		"last", "Last", "holding", "Waiting to sell", "unm", "unmatched",
-		"trees", "Trees Felled", "tcount", "Total");
+		"last", "Last", "holding", "Waiting to sell", "unm", "unmatched");
 
 	public static String t(String key) {
 		return ("en".equals(Tracker.data.settings.lang) ? EN : RU).get(key);
@@ -32,7 +30,6 @@ public final class HudRenderer {
 		Tracker.Settings s = Tracker.data.settings;
 		Font font = Minecraft.getInstance().font;
 		if (s.visible) box(g, font, s, flipLines(s), s.x, s.y);
-		if (s.treeVisible) box(g, font, s, treeLines(s), s.treeX, s.treeY);
 	}
 
 	private static double hours() {
@@ -61,25 +58,6 @@ public final class HudRenderer {
 			String hold = c("7") + t("holding") + ": " + c("f") + Tracker.data.holding.size();
 			if (Tracker.data.unmatched > 0) hold += c("7") + "  (" + t("unm") + ": " + Tracker.data.unmatched + ")";
 			l.add(hold);
-		}
-		return l;
-	}
-
-	private static List<String> treeLines(Tracker.Settings s) {
-		List<String> l = new ArrayList<>();
-		l.add(c("a") + c("l") + t("trees"));
-		l.add(c("7") + t("tcount") + ": " + c("6") + Tracker.data.trees);
-		String sess = c("7") + t("session") + ": " + c("6") + Tracker.sessionTrees;
-		if (s.treePerHour) {
-			sess += c("7") + "  |  " + c("6") + Math.round(Tracker.sessionTrees / hours()) + c("7") + "/" + t("hour");
-		}
-		l.add(sess);
-		if (s.treeByType && !Tracker.data.treeTypes.isEmpty()) {
-			List<Map.Entry<String, Integer>> es = new ArrayList<>(Tracker.data.treeTypes.entrySet());
-			es.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
-			for (int i = 0; i < Math.min(5, es.size()); i++) {
-				l.add(c("7") + "  " + es.get(i).getKey() + ": " + c("f") + es.get(i).getValue());
-			}
 		}
 		return l;
 	}

@@ -84,16 +84,6 @@ public class ConfigScreen extends Screen {
 		}));
 		l.add(new Cat("Флип-трекер", "Flip Tracker", flip));
 
-		// --- Деревья ---
-		List<Opt> trees = new ArrayList<>();
-		trees.add(toggle("Показывать панель деревьев", "Show trees panel", () -> s().treeVisible, v -> s().treeVisible = v));
-		trees.add(toggle("Разбивка по породам", "Show by tree type", () -> s().treeByType, v -> s().treeByType = v));
-		trees.add(toggle("Деревьев в час", "Trees per hour", () -> s().treePerHour, v -> s().treePerHour = v));
-		trees.add(action("Добавить дерево вручную", "Add a tree manually", () -> "+1", () -> Tracker.addTree(null, 1), false));
-		trees.add(action("Сбросить деревья", "Reset trees", () -> tr("Сбросить", "Reset"), Tracker::resetTrees, false));
-		trees.add(toggle("Запись чата (отладка)", "Record chat (debug)", () -> s().recordChat, v -> s().recordChat = v));
-		l.add(new Cat("Деревья", "Trees", trees));
-
 		// --- Интерфейс ---
 		List<Opt> gui = new ArrayList<>();
 		gui.add(toggle("Фон", "Background", () -> s().showBg, v -> s().showBg = v));
@@ -109,15 +99,11 @@ public class ConfigScreen extends Screen {
 
 		// --- Позиция ---
 		List<Opt> pos = new ArrayList<>();
-		pos.add(step("Флипы: X", "Flips: X", 0, 2000, 10, "", () -> s().x, v -> s().x = v));
-		pos.add(step("Флипы: Y", "Flips: Y", 0, 2000, 10, "", () -> s().y, v -> s().y = v));
-		pos.add(step("Деревья: X", "Trees: X", 0, 2000, 10, "", () -> s().treeX, v -> s().treeX = v));
-		pos.add(step("Деревья: Y", "Trees: Y", 0, 2000, 10, "", () -> s().treeY, v -> s().treeY = v));
-		pos.add(action("Сбросить позиции", "Reset positions", () -> tr("Сбросить", "Reset"), () -> {
+		pos.add(step("Позиция X", "Position X", 0, 2000, 10, "", () -> s().x, v -> s().x = v));
+		pos.add(step("Позиция Y", "Position Y", 0, 2000, 10, "", () -> s().y, v -> s().y = v));
+		pos.add(action("Сбросить позицию", "Reset position", () -> tr("Сбросить", "Reset"), () -> {
 			s().x = 6;
 			s().y = 6;
-			s().treeX = 6;
-			s().treeY = 80;
 			Tracker.save();
 		}, true));
 		l.add(new Cat("Позиция", "Position", pos));
@@ -255,7 +241,6 @@ public class ConfigScreen extends Screen {
 			String[] about = {
 				"Akiro's Allround Mod",
 				tr("Флип-трекер: прибыль с аукционных флипов.", "Flip Tracker: auction flip profit."),
-				tr("Деревья: счётчик срубленных деревьев.", "Trees: felled tree counter."),
 				tr("Данные: config/fliptracker.json", "Data: config/fliptracker.json"),
 				tr("Команды: /flip help (или /akiro help)", "Commands: /flip help (or /akiro help)"),
 			};
