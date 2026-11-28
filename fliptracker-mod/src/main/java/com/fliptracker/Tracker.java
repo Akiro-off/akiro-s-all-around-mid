@@ -16,7 +16,7 @@ public final class Tracker {
 	public static final class Flip { public String item; public long buy, got, profit, ts; }
 	public static final class Hold { public String item; public long price, ts; }
 	public static final class Settings {
-		public String lang = "ru";
+		public String lang = "en";
 		// общий стиль панелей
 		public boolean showBg = true;
 		public boolean mcStyle = true;      // true: цветной текст как в Minecraft, false: один цвет
