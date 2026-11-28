@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Akiro’s Allround Mod</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Press+Start+2P&display=swap">
+<style>
+:root{--bg:#eef2ee;--card:#fff;--ink:#1d2b22;--mute:#5b6f61;--line:#d3ddd5;--gold:#9a6f00;--gain:#1f8a3b;--loss:#c0392b;--btn:#2f6b3f;--btnt:#fff;--code:#e4ece5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#101812;--card:#1a261e;--ink:#e6efe8;--mute:#93a899;--line:#2f4036;--gold:#e0b341;--gain:#4cc26a;--loss:#ef7b6d;--btn:#4cc26a;--btnt:#10200f;--code:#142019}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#101812;--card:#1a261e;--ink:#e6efe8;--mute:#93a899;--line:#2f4036;--gold:#e0b341;--gain:#4cc26a;--loss:#ef7b6d;--btn:#4cc26a;--btnt:#10200f;--code:#142019}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 Rubik,system-ui,sans-serif}
+main{max-width:900px;margin:0 auto;padding:20px 16px 56px}
+nav{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;margin-bottom:28px}
+nav a{color:var(--mute);text-decoration:none}nav a:hover{color:var(--ink)}
+.hero{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.hero img{width:96px;height:96px;image-rendering:pixelated;border-radius:8px;border:1px solid var(--line)}
+h1{font:400 clamp(18px,4.6vw,28px)/1.35 "Press Start 2P",monospace;margin:0 0 8px;color:var(--gold)}
+h2{font-size:22px;margin:44px 0 12px}
+.lead{margin:0;color:var(--mute);max-width:560px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+a.btn,button{font:inherit;font-weight:500;padding:10px 16px;border-radius:6px;border:0;background:var(--btn);color:var(--btnt);cursor:pointer;text-decoration:none;display:inline-block}
+a.btn.ghost,button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.note{font-size:14px;color:var(--mute);border-left:3px solid var(--line);padding-left:12px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.card b{display:block;margin-bottom:4px}.card p{margin:0;color:var(--mute);font-size:15px}
+.num{font:400 11px "Press Start 2P",monospace;color:var(--gold);display:block;margin-bottom:10px}
+code{background:var(--code);padding:1px 6px;border-radius:4px;font-size:14px}
+.calc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-top:10px;font-variant-numeric:tabular-nums}
+.p{color:var(--gain);font-weight:500}.m{color:var(--loss);font-weight:500}
+.wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;font-size:15px}
+th:nth-child(-n+2),td:nth-child(-n+2){text-align:left}
+th{font-weight:500;color:var(--mute);font-size:13px}
+ol.steps{padding-left:20px}ol.steps li{margin:6px 0}
+textarea,input,select{font:inherit;padding:9px 12px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);min-width:0;width:100%}
+textarea{min-height:130px;font-family:ui-monospace,Consolas,monospace;font-size:14px}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0}
+.filters label{font-size:13px;color:var(--mute);display:block}
+.best{border-color:var(--gold)}
+footer{margin-top:48px;font-size:13px;color:var(--mute)}
+</style>
+</head>
+<body>
+<main>
+<nav><a href="#how">Как работает</a><a href="#install">Установка</a><a href="#commands">Команды</a><a href="#finder">Подбор флипов</a><a href="#limits">Ограничения</a></nav>
+
+<div class="hero">
+<img alt="Иконка мода: золотая монета с буквой A" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAAWfmNhQlgAABZ+anVtYgAAAB5qdW1kYzJwYQARABCAAACqADibcQNjMnBhAAAAFlhqdW1iAAAAR2p1bWRjMm1hABEAEIAAAKoAOJtxA3VybjpjMnBhOmQ5ZTgzZTkxLTFkZGMtNDUyYy1iMjg0LWIyMGM3YWE5ZjhmMgAAAAOTanVtYgAAAClqdW1kYzJhcwARABCAAACqADibcQNjMnBhLmFzc2VydGlvbnMAAAAAuGp1bWIAAABEanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5pbmdyZWRpZW50LnYzAAAAABhjMnNoUVNpsfqCDc2ZjJ1GhyJJggAAAGxjYm9yo2lkYzpmb3JtYXRpaW1hZ2UvcG5namluc3RhbmNlSUR4LHhtcDppaWQ6MDJmM2JhOGUtYzMzNi00MmE0LTg3ZjctMWM1NTM4YTA0ZTE3bHJlbGF0aW9uc2hpcGhwYXJlbnRPZgAAAeJqdW1iAAAAQWp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuYWN0aW9ucy52MgAAAAAYYzJzaPVJC6liI/OeGfRmEAMjdj8AAAGZY2JvcqJnYWN0aW9uc4KiZmFjdGlvbmtjMnBhLm9wZW5lZGpwYXJhbWV0ZXJzoWtpbmdyZWRpZW50c4GiY3VybHgtc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5pbmdyZWRpZW50LnYzZGhhc2hYIAJjN2QCdZrhzSefLF3SlxaVwkAxWtqiOR/Jo6MSGNHQpGZhY3Rpb254HWNvbS5hbnRocm9waWMuY2xhdWRlLnByb3ZpZGVkanBhcmFtZXRlcnOheB9jb20uYW50aHJvcGljLm9yaWdpbi1jb25maWRlbmNlZ3Vua25vd25rZGVzY3JpcHRpb254ZkNsYXVkZSBwcm92aWRlZCB0aGlzIGZpbGUgYXQgdGhlIHJlcXVlc3Qgb2YgYSB1c2VyIGFuZCBtYXkgaGF2ZSBjcmVhdGVkIG9yIG1vZGlmaWVkIHRoZSBmaWxlIGNvbnRlbnRzLm1zb2Z0d2FyZUFnZW50oWRuYW1lZkNsYXVkZXJhbGxBY3Rpb25zSW5jbHVkZWT1AAAAyGp1bWIAAABAanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5oYXNoLmRhdGEAAAAAGGMyc2i9gaKuhJ/Bj7OKhz/f88kzAAAAgGNib3KlY2FsZ2ZzaGEyNTZjcGFkTQAAAAAAAAAAAAAAAABkaGFzaFggpCCj5nbojl+T3Vi13s3mCNZXg5qDCF6W1KHxVEoWkQNkbmFtZW5qdW1iZiBtYW5pZmVzdGpleGNsdXNpb25zgaJlc3RhcnQYIWZsZW5ndGgZFooAAAI+anVtYgAAACdqdW1kYzJjbAARABCAAACqADibcQNjMnBhLmNsYWltLnYyAAAAAg9jYm9ypWNhbGdmc2hhMjU2aXNpZ25hdHVyZXhNc2VsZiNqdW1iZj0vYzJwYS91cm46YzJwYTpkOWU4M2U5MS0xZGRjLTQ1MmMtYjI4NC1iMjBjN2FhOWY4ZjIvYzJwYS5zaWduYXR1cmVqaW5zdGFuY2VJRHgseG1wOmlpZDoyNjY1YmU2YS1mZWQzLTRmYmQtOTVhMS1kMTNjOTBhZWQ5MDdyY3JlYXRlZF9hc3NlcnRpb25zg6JjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggAmM3ZAJ1muHNJ58sXdKXFpXCQDFa2qI5H8mjoxIY0dCiY3VybHgqc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5hY3Rpb25zLnYyZGhhc2hYIGscO3IfbKvx+HdnW7/AG8dnHkBWCyIzrarZ1J2wcpFPomN1cmx4KXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaGFzaC5kYXRhZGhhc2hYIK+YvPzE4g7451TjpnLhfk0uEZhSBZ39NdFYhS+kpzlkdGNsYWltX2dlbmVyYXRvcl9pbmZvo2RuYW1lb0FudGhyb3BpYyBGaWxlc2d2ZXJzaW9uZTEuMC4wa3NwZWNWZXJzaW9uZTIuNC4wAAAQOGp1bWIAAAAoanVtZGMyY3MAEQAQgAAAqgA4m3EDYzJwYS5zaWduYXR1cmUAAAAQCGNib3LShFkCEqIBJhghWQIKMIICBjCCAY2gAwIBAgIUQOWgCu7COdC+uIP6BkIFPWdVEwAwCgYIKoZIzj0EAwMwSTEXMBUGA1UEChMOQW50aHJvcGljLCBQQkMxLjAsBgNVBAMTJUFudGhyb3BpYyBDb250ZW50IENyZWRlbnRpYWxzIFJvb3QgQ0EwHhcNMjYwODA3MTg0MzU2WhcNMjgwODA2MTk0MzU2WjBEMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEpMCcGA1UEAxMgQW50aHJvcGljIENsYXVkZSBDb250ZW50IFNpZ25pbmcwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASYegpry1AYBRTVNL1CpTlbROnY3dey+UrsF9C3phYrATN3ZHf93Mo8RQN0KOUuOn19P4oWNFWe5n2/She9N7eTo1gwVjAOBgNVHQ8BAf8EBAMCB4AwFQYDVR0lBA4wDAYKKwYBBAGD6F4CATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFM5R4gSBTmRbI/jjxM+aPpzB11zCMAoGCCqGSM49BAMDA2cAMGQCMDFzHRSeAXrSy1WOzkbhPZ6Km2wGTmZ/2gK18k8BQGXyqz88Rdrz6CTX9flAnYNVxgIwcF9c3fVhqmJKpi+UhasNUMko69cyX6STPfta3Q8EjyzDjzoyrol46FP6VFHhvUcJoWNwYWRZDZ4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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">
+<div>
+<h1>Akiro’s Allround Mod</h1>
+<p class="lead">Мод для Hypixel SkyBlock, который сам считает твою прибыль с аукционных флипов и показывает её прямо в игре.</p>
+</div>
+</div>
+<div class="btns"><a class="btn" href="#how">Как это работает</a><a class="btn ghost" href="#finder">Подобрать лучшие флипы</a></div>
+<p class="note">Мод только читает сообщения чата. Он ничего не покупает, не продаёт и не кликает за тебя. Мод создан с помощью ИИ (Claude).</p>
+
+<h2 id="how">Как работает мод</h2>
+<div class="grid">
+<div class="card"><span class="num">01</span><b>Покупка</b><p>Мод видит сообщение «You purchased … for N coins!» и запоминает цену покупки.</p></div>
+<div class="card"><span class="num">02</span><b>Продажа</b><p>Когда ты забираешь монеты в Manage Auctions, приходит «You collected N coins from selling …». Мод находит покупку по названию предмета.</p></div>
+<div class="card"><span class="num">03</span><b>Прибыль</b><p>Прибыль = полученные монеты минус цена покупки. Налог аукциона уже вычтен, потому что в сообщении итоговая сумма.</p></div>
+<div class="card"><span class="num">04</span><b>Панель</b><p>В углу экрана: общая прибыль, сессия, монеты в час, последний флип и предметы, которые ещё ждут продажи.</p></div>
+</div>
+<div class="calc">Пример: купил за <b>1 500 000</b>, забрал <b>2 100 000</b> → прибыль <span class="p">+600 000</span>. На панели это отображается как <code>+600.00k</code>.</div>
+
+<h2 id="install">Установка</h2>
+<ol class="steps">
+<li>Нужен Minecraft <b>26.2</b> с загрузчиком <b>Fabric</b> и мод <b>Fabric API</b>.</li>
+<li>Положи файл мода <code>.jar</code> в папку <code>mods</code> своей сборки.</li>
+<li>Запусти игру, зайди на Hypixel SkyBlock и напиши в чате <code>/flip</code>, откроется меню настроек.</li>
+<li>Флипай как обычно. Не забывай забирать монеты в Manage Auctions: прибыль засчитывается в этот момент.</li>
+</ol>
+
+<h2 id="commands">Команды</h2>
+<div class="wrap"><table>
+<thead><tr><th>Команда</th><th>Что делает</th></tr></thead>
+<tbody>
+<tr><td><code>/flip</code> или <code>/akiro</code></td><td>Открывает меню настроек</td></tr>
+<tr><td><code>/flip help</code></td><td>Список команд</td></tr>
+<tr><td><code>/flip lang ru|en</code></td><td>Язык</td></tr>
+<tr><td><code>/flip bg green</code>, <code>/flip fg gold</code></td><td>Цвет фона и текста (название или HEX)</td></tr>
+<tr><td><code>/flip alpha 70</code></td><td>Прозрачность фона, 0–100</td></tr>
+<tr><td><code>/flip pos 10 10</code>, <code>/flip move 20 0</code></td><td>Положение панели</td></tr>
+<tr><td><code>/flip toggle</code></td><td>Показать или скрыть панель</td></tr>
+<tr><td><code>/flip reset session|pos|all</code></td><td>Сбросы</td></tr>
+</tbody></table></div>
+
+<h2 id="finder">Подбор лучших флипов</h2>
+<p class="lead">Скопируй флипы, которые тебя интересуют (например, с <a href="https://sky.coflnet.com/flipper" rel="noopener" style="color:var(--gold)">sky.coflnet.com</a>), и вставь ниже по одному в строке. Страница посчитает прибыль после налога и покажет лучшие.</p>
+<p class="note">Формат строки: <code>Название; цена покупки; цена продажи; продаж в день</code>. Последнее число можно не писать. Цены можно писать как 250k, 1.5m, 2b. Эта страница не может сама запрашивать данные с Coflnet, поэтому работает только с тем, что ты вставишь.</p>
+<textarea id="in" aria-label="Список флипов" placeholder="Название; 1.5m; 2.4m; 40"></textarea>
+<div class="filters">
+<div><label for="sort">Сортировка</label><select id="sort"><option value="profit">По прибыли</option><option value="roi">По проценту (ROI)</option><option value="day">По прибыли в день</option></select></div>
+<div><label for="minp">Мин. прибыль</label><input id="minp" placeholder="100k"></div>
+<div><label for="minv">Мин. продаж в день</label><input id="minv" placeholder="10" inputmode="numeric"></div>
+<div><label for="budget">Бюджет (макс. покупка)</label><input id="budget" placeholder="50m"></div>
+</div>
+<div class="btns" style="margin:8px 0 14px"><button id="go">Найти лучшие</button><button class="ghost" id="ex">Вставить пример</button></div>
+<div id="msg" class="note" hidden></div>
+<div id="bestbox"></div>
+<div class="wrap" id="res" hidden><table>
+<thead><tr><th>#</th><th>Предмет</th><th>Покупка</th><th>Продажа</th><th>Налог</th><th>Прибыль</th><th>ROI</th><th>Продаж/день</th><th>Прибыль/день</th></tr></thead>
+<tbody id="rows"></tbody></table></div>
+
+<h2 id="limits">Ограничения</h2>
+<ul>
+<li>Считается только аукцион, базар не учитывается.</li>
+<li>Если предмет куплен до установки мода, продажа попадёт в счётчик «без пары» и не изменит прибыль.</li>
+<li>Если Hypixel поменяет текст сообщений, мод перестанет их узнавать, и шаблоны придётся обновить.</li>
+<li>Налог в подборе флипов приблизительный: 1–2.5% за выставление и 1% при получении монет от 1m.</li>
+</ul>
+
+<footer>Akiro’s Allround Mod. Не связан с Hypixel и Coflnet. Данные для подбора флипов вводятся вручную.</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function num(s){s=String(s).trim().toLowerCase().replace(/[\s,]/g,'');const m=s.match(/^(-?\d+(?:\.\d+)?)([kmb]?)$/);return m?parseFloat(m[1])*({'':1,k:1e3,m:1e6,b:1e9}[m[2]]):NaN}
+function tax(s){const f=s>=1e8?.025:s>=1e7?.02:.01;return s*f+(s>=1e6?s*.01:0)}
+const fmt=n=>Math.round(n).toLocaleString('ru-RU');
+function td(tr,text,cls){const c=document.createElement('td');c.textContent=text;if(cls)c.className=cls;tr.appendChild(c)}
+$('ex').onclick=()=>{$('in').value="Пример: предмет A; 1.5m; 2.4m; 40\nПример: предмет B; 300k; 520k; 120\nПример: предмет C; 40m; 52m; 6\nПример: предмет D; 8m; 8.4m; 200";$('go').click()};
+$('go').onclick=()=>{
+  const lines=$('in').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  const minp=num($('minp').value)||0, minv=num($('minv').value)||0, bud=num($('budget').value)||Infinity;
+  let items=[],bad=0;
+  for(const l of lines){
+    const p=l.split(/[;\t|]/).map(x=>x.trim());
+    if(p.length<3){bad++;continue}
+    const buy=num(p[1]),sell=num(p[2]),vol=p[3]?num(p[3]):NaN;
+    if(isNaN(buy)||isNaN(sell)||buy<=0){bad++;continue}
+    const t=tax(sell),profit=sell-buy-t;
+    items.push({name:p[0],buy,sell,t,profit,roi:profit/buy*100,vol:isNaN(vol)?null:vol,day:isNaN(vol)?null:profit*vol});
+  }
+  const shown=items.filter(i=>i.profit>=minp&&i.buy<=bud&&(!minv||(i.vol!==null&&i.vol>=minv)));
+  const key=$('sort').value;
+  shown.sort((a,b)=>(b[key]??-Infinity)-(a[key]??-Infinity));
+  const top=shown.slice(0,25);
+  const msg=$('msg');
+  msg.hidden=false;
+  msg.textContent=lines.length?`Разобрано строк: ${items.length}${bad?`, пропущено из-за ошибок: ${bad}`:''}. Подходит под фильтры: ${shown.length}.`:'Вставь хотя бы одну строку.';
+  $('res').hidden=!top.length;
+  const body=$('rows');body.textContent='';
+  top.forEach((i,n)=>{const tr=document.createElement('tr');
+    td(tr,n+1);td(tr,i.name);td(tr,fmt(i.buy));td(tr,fmt(i.sell));td(tr,fmt(i.t));
+    td(tr,(i.profit>0?'+':'')+fmt(i.profit),i.profit>=0?'p':'m');td(tr,i.roi.toFixed(1)+'%');
+    td(tr,i.vol===null?'—':fmt(i.vol));td(tr,i.day===null?'—':fmt(i.day));body.appendChild(tr)});
+  const box=$('bestbox');box.textContent='';
+  if(top.length){const d=document.createElement('div');d.className='card best';d.style.marginBottom='10px';
+    const b=document.createElement('b');b.textContent='Лучший по выбранной сортировке: '+top[0].name;
+    const p=document.createElement('p');p.textContent=`Прибыль ${fmt(top[0].profit)} (${top[0].roi.toFixed(1)}%) после приблизительного налога.`;
+    d.append(b,p);box.appendChild(d)}
+};
+</script>
+</body>
+</html>
